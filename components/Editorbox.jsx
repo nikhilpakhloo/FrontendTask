@@ -1,26 +1,19 @@
-"use client"
-import React, { useState } from 'react'
-import ListMaker from './editorbox/ListMaker'
-import NoteMaker from './editorbox/NoteMaker'
-import Readmefile from './editorbox/Readmefile'
-import TextEditor from './editorbox/TextEditor'
-import DragDrop from './DragDrop'
-export default function Editorbox() {
+"use client";
+import { useState } from "react";
+import Header from "./Header";
+import { EditorContainer } from "./EditorContainer";
+export default function Editorbox(props) {
+  const [showEditor, setShowEditor] = useState(false);
 
-  const [showEditor , setShowEditor] = useState(false)
   return (
-   <main className='bg-gray-800 flex-1 flex justify-center w-full items-center h-screen'>
-    {showEditor ? (
-      <ListMaker/>
+    <div>
+      <section>
+        <Header fileName={props.fileName} setFileName={props.setFileName} />
+      </section>
+      <section>
+        <EditorContainer fileContent={props.fileContent} />
+      </section>
 
-
-    ):(
-
-
-      <DragDrop/>
-    )}
- 
-
-   </main>
-  )
+    </div>
+  );
 }
