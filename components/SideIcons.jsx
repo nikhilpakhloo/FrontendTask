@@ -12,6 +12,8 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 
 export default function SideIcons() {
+    //for realistic touch i am using this data
+
   return (
     <div className="w-14  bg-[#06141B] flex flex-col gap-5 items-center py-5">
       <FontAwesomeIcon icon={faCopy} color="white" size="2xl" />

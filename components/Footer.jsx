@@ -9,6 +9,7 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 
 export default function Footer() {
+  //here i am rendering some static data to show on footer so it look realistic
   const items1 = [
     { icon: faCodeBranch, text: "master" },
     { icon: null, text: "Launchpad" },

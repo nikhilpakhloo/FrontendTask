@@ -9,17 +9,15 @@ function Folder({
   handleInsertNode,
   explorer,
   handleAddFileName,
-  handleDisplayContent,
 }) {
+  // states to manage the input to add file/foldername 
   const [expand, setExpand] = useState(false);
   const [showInput, setShowInput] = useState({
     visible: false,
     isFolder: false,
   });
-  const [Editor, setEditor] = useState(null)
-  
 
-
+//setting the new folder/file
   const handleNewFolder = (e, isFolder) => {
     e.stopPropagation();
     setExpand(true);
@@ -28,11 +26,12 @@ function Folder({
       isFolder,
     });
   };
-
+//on pressing enter handleInsertNode call and name file/folder save as object
   const onAddFolder = (e) => {
     if (e.key === "Enter" && e.target.value) {
       const enteredFileName = e.target.value.trim();
       const isFolder = showInput.isFolder;
+      // if its file then it check for the entered extension is not equal to specified extension it will not save the folder
 
       if (!isFolder) {
         const allowedExtensions = [".note", ".lt", ".readme", ".ed"];
@@ -49,7 +48,7 @@ function Folder({
       setShowInput({ ...showInput, visible: false });
     }
   };
-
+//sort the file/folder as per alphabetical order , folder comes at the top  and file at bottom
   const sortedItems = [...explorer.items].sort((a, b) => {
     if (a.isFolder && !b.isFolder) return -1;
     if (!a.isFolder && b.isFolder) return 1;
@@ -57,6 +56,7 @@ function Folder({
   });
 
   if (explorer.isFolder) {
+    //if saved item is folder it will show file and folder icon next to it for nesting
     return (
       <div className=" w-full mt-5">
         <div
@@ -84,7 +84,10 @@ function Folder({
         <div className={`pl-5 ${expand ? "block" : "hidden"}`}>
           {showInput.visible && (
             <div className="flex items-center mt-2 text-gray-400 cursor-pointer">
+              {/* if folder the "📁"  else  "📄" icon preceeded */}
               <span>{showInput.isFolder ? "📁" : "📄"}</span>
+
+              {/* input bar to add folder/file name */}
               <input
                 type="text"
                 className="ml-2 px-2 py-1 bg-gray-800 border border-gray-600 rounded-md text-sm focus:outline-none focus:border-blue-500"
@@ -96,12 +99,13 @@ function Folder({
           )}
 
           {sortedItems.map((exp) => (
+
+            //retuning folder func here
             <Folder
               handleInsertNode={handleInsertNode}
               key={exp.id}
               explorer={exp}
               handleAddFileName={handleAddFileName}
-              handleDisplayContent={handleDisplayContent}
             />
           ))}
         </div>
@@ -109,11 +113,12 @@ function Folder({
     );
   } else {
     return (
+
+      // if file no icon will show
       <span
         className="block mt-2 text-gray-400 cursor-pointer"
         onClick={() => {
           handleAddFileName(explorer.name);
-          handleDisplayContent(explorer.content);
         }}
       >
         📄 {explorer.name}

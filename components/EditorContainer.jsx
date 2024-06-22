@@ -2,11 +2,12 @@ import TextEditor from "./EditorComponents/TextEditor";
 import NoteMaker from "./EditorComponents/NoteMaker";
 import ListMaker from "./EditorComponents/ListMaker";
 import ReadmeEditor from "./EditorComponents/ReadmeEditor";
-import DragDrop from "./EditorComponents/Default";
+import Default from "./EditorComponents/Default";
 
 export const EditorContainer = ( props ) => {
+  // props accepting file name splitting the items after dot e.g index.html after splitting it will html
   const Ext = props.fileExt.split('.').pop();
-
+//using switch case to render the different component based on ext
 
   const renderEditorComponent = () => {
     switch (Ext) {
@@ -19,7 +20,7 @@ export const EditorContainer = ( props ) => {
       case "readme":
         return <ReadmeEditor />;
       default:
-        return <DragDrop/>;
+        return <Default/>;
     }
   };
 

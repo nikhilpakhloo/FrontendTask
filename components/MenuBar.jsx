@@ -1,6 +1,8 @@
 import React from 'react';
 
 export default function MenuBar() {
+
+  //for realistic touch i am using this data
   const menus = [
     "File", "Edit", "Selection", "View", "Go", "Run", "Terminal", "Help"
   ];
