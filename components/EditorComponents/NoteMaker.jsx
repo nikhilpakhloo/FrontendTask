@@ -1,54 +1,104 @@
-import React, { useState } from 'react';
-import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
-
-const initialNotes = [
-  { id: '1', content: 'Note 1', category: 'Category A' },
-  { id: '2', content: 'Note 2', category: 'Category B' },
-  { id: '3', content: 'Note 3', category: 'Category A' },
-];
+import React, { useState } from "react";
 
 export default function NoteMaker() {
-  const [notes, setNotes] = useState(initialNotes);
+  // Array of status categories
+  const status = ["Todo", "Doing", "Done"];
 
-  const onDragEnd = (result) => {
-    if (!result.destination) return;
+  // State to manage notes data
+  const [data, setData] = useState([]);
 
-    const updatedNotes = [...notes];
-    const [removedNote] = updatedNotes.splice(result.source.index, 1);
-    updatedNotes.splice(result.destination.index, 0, removedNote);
+  // State to manage input value and selected status
+  const [inputValue, setInputValue] = useState("");
+  const [selectedStatus, setSelectedStatus] = useState("Todo");
 
-    setNotes(updatedNotes);
+  // Function to handle input change
+  const handleInputChange = (e) => {
+    setInputValue(e.target.value);
+  };
+
+  // Function to handle status change
+  const handleStatusChange = (e) => {
+    setSelectedStatus(e.target.value);
+  };
+
+  // Function to add a new note
+  const addNote = () => {
+    if (inputValue.trim() !== "") {
+      const newNote = {
+        id: Date.now(),
+        note: inputValue,
+        status: selectedStatus,
+      };
+      setData([...data, newNote]);
+      setInputValue("");
+    }
+  };
+
+  // Function to handle drag start event
+  const handleDragStart = (e, id) => {
+    e.dataTransfer.setData("text/plain", id.toString());
+  };
+
+  // Function to handle drop event
+  const handleDrop = (e, targetStatus) => {
+    const id = e.dataTransfer.getData("text/plain");
+    const updatedData = data.map((item) => {
+      if (item.id === parseInt(id)) {
+        return { ...item, status: targetStatus };
+      }
+      return item;
+    });
+    setData(updatedData);
   };
 
   return (
-    
-    <DragDropContext onDragEnd={onDragEnd} >
-      <div className='bg-[#253745]  w-1/2 f h-[94vh] '>
- 
-      <Droppable droppableId="notes" >
-        {(provided) => (
-          <div ref={provided.innerRef} {...provided.droppableProps}>
-            {notes.map((note, index) => (
-              <Draggable key={note.id} draggableId={note.id} index={index}  >
-                {(provided) => (
+    <div className="w-full bg-[#253745] h-[94vh] flex flex-col items-center p-5" id="draggablearea">
+      <input
+        type="text"
+        placeholder="Add a new note..."
+        value={inputValue}
+        onChange={handleInputChange}
+        className="mt-3 p-2 border border-gray-300 rounded-md"
+      />
+      <select value={selectedStatus} onChange={handleStatusChange} className="mt-3 p-2 border border-gray-300 rounded-md">
+        {status.map((item) => (
+          <option key={item} value={item}>
+            {item}
+          </option>
+        ))}
+      </select>
+      <button onClick={addNote} className="mt-3 p-2 bg-blue-500 text-white rounded-md">
+        Add Note
+      </button>
+      <div className="flex-1 w-full mt-5 flex justify-center">
+        {status.map((item, index) => (
+          <div
+            key={index}
+            className="flex-1 flex flex-col justify-start items-center"
+            onDrop={(e) => handleDrop(e, item)}
+            onDragOver={(e) => e.preventDefault()}
+          >
+            <h1 className="text-3xl text-white select-none">{item}</h1>
+            <div
+              className="flex flex-col cursor-move select-none mt-5 "
+              onDragOver={(e) => e.preventDefault()}
+            >
+              {data
+                .filter((note) => note.status === item)
+                .map((filteredNote) => (
                   <div
-                    ref={provided.innerRef}
-                    {...provided.draggableProps}
-                    {...provided.dragHandleProps}
-                    className='bg-white rounded-lg shadow-md p-4 mb-2'
-                    >
-                    {note.content} - {note.category}
+                    key={filteredNote.id}
+                    className="bg-gray-200 rounded-md shadow-lg w-[400px] h-auto p-2 mt-2"
+                    draggable
+                    onDragStart={(e) => handleDragStart(e, filteredNote.id)}
+                  >
+                    {filteredNote.note}
                   </div>
-                )}
-              </Draggable>
-            ))}
-            {provided.placeholder}
+                ))}
+            </div>
           </div>
-        )}
-      </Droppable>
+        ))}
       </div>
-      
-    </DragDropContext>
-
+    </div>
   );
 }
