@@ -1,4 +1,4 @@
-// File: /Users/home/Desktop/Work/test/FrontendTask/app/page.js
+// File: /home/codex/Desktop/wasserstoff/app/page.js
 import * as entry from '../../../app/page.js'
 import type { ResolvingMetadata, ResolvingViewport } from 'next/dist/lib/metadata/types/metadata-interface.js'
 

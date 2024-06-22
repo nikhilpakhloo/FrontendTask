@@ -1,32 +1,31 @@
-import React, { useEffect, useState } from "react";
+import TextEditor from "./EditorComponents/TextEditor";
+import NoteMaker from "./EditorComponents/NoteMaker";
+import ListMaker from "./EditorComponents/ListMaker";
+import ReadmeEditor from "./EditorComponents/ReadmeEditor";
+import DragDrop from "./EditorComponents/Default";
 
-export const EditorContainer = (props) => {
-  const [content, setContent] = useState(props.fileContent);
+export const EditorContainer = ( props ) => {
+  const Ext = props.fileExt.split('.').pop();
 
-  const handleChange = (e) => {
-    setContent(e.target.value);
 
-    if (props.onChange) {
-      props.onChange(e.target.value);
+  const renderEditorComponent = () => {
+    switch (Ext) {
+      case "ed":
+        return <TextEditor />;
+      case "note":
+        return <NoteMaker />;
+      case "lt":
+        return <ListMaker />;
+      case "readme":
+        return <ReadmeEditor />;
+      default:
+        return <DragDrop/>;
     }
   };
 
-  useEffect(() => {
-    setContent(props.fileContent);
-  }, [props.fileContent]);
-
   return (
-    <div className="text-white bg-gray-900 rounded-lg shadow-lg overflow-auto">
-      <pre className="line-numbers">
-        <code className="language-html">
-          <textarea
-            className="w-full h-full bg-gray-800 text-white p-2"
-            value={content}
-            rows={30}
-            onChange={handleChange}
-          />
-        </code>
-      </pre>
+    <div className="flex w-full h-full justify-center items-center">
+      {renderEditorComponent()}
     </div>
   );
 };

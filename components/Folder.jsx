@@ -1,20 +1,24 @@
 import { useState } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faFile, faFolder } from "@fortawesome/free-solid-svg-icons";
+import {
+  faFile,
+  faFolder,
+} from "@fortawesome/free-solid-svg-icons";
 
 function Folder({
-  handleInsertNode = () => {},
+  handleInsertNode,
   explorer,
-  fileName,
-  setFileName,
   handleAddFileName,
-  handleDisplayContent
+  handleDisplayContent,
 }) {
   const [expand, setExpand] = useState(false);
   const [showInput, setShowInput] = useState({
     visible: false,
     isFolder: false,
   });
+  const [Editor, setEditor] = useState(null)
+  
+
 
   const handleNewFolder = (e, isFolder) => {
     e.stopPropagation();
@@ -26,18 +30,38 @@ function Folder({
   };
 
   const onAddFolder = (e) => {
-    if (e.keyCode === 13 && e.target.value) {
-      handleInsertNode(explorer.id, e.target.value, showInput.isFolder);
+    if (e.key === "Enter" && e.target.value) {
+      const enteredFileName = e.target.value.trim();
+      const isFolder = showInput.isFolder;
+
+      if (!isFolder) {
+        const allowedExtensions = [".note", ".lt", ".readme", ".ed"];
+
+        if (!allowedExtensions.some((ext) => enteredFileName.endsWith(ext))) {
+          alert(
+            "Invalid file extension. Please use only '.note', '.lt', '.readme', or '.ed' extensions."
+          );
+          return;
+        }
+      }
+
+      handleInsertNode(explorer.id, enteredFileName, isFolder);
       setShowInput({ ...showInput, visible: false });
     }
   };
 
+  const sortedItems = [...explorer.items].sort((a, b) => {
+    if (a.isFolder && !b.isFolder) return -1;
+    if (!a.isFolder && b.isFolder) return 1;
+    return a.name.localeCompare(b.name);
+  });
+
   if (explorer.isFolder) {
     return (
-      <div className="mt-2">
+      <div className=" w-full mt-5">
         <div
           onClick={() => setExpand(!expand)}
-          className="flex items-center cursor-pointer text-gray-400"
+          className="flex items-center justify-center w-[300px] cursor-pointer text-gray-400"
         >
           <span>📁 {explorer.name}</span>
 
@@ -71,13 +95,11 @@ function Folder({
             </div>
           )}
 
-          {explorer.items.map((exp) => (
+          {sortedItems.map((exp) => (
             <Folder
               handleInsertNode={handleInsertNode}
               key={exp.id}
               explorer={exp}
-              fileName={fileName}
-              setFileName={setFileName}
               handleAddFileName={handleAddFileName}
               handleDisplayContent={handleDisplayContent}
             />
@@ -91,7 +113,8 @@ function Folder({
         className="block mt-2 text-gray-400 cursor-pointer"
         onClick={() => {
           handleAddFileName(explorer.name);
-          handleDisplayContent(explorer.content)}} 
+          handleDisplayContent(explorer.content);
+        }}
       >
         📄 {explorer.name}
       </span>
